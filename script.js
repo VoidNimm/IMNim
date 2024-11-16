@@ -1,14 +1,12 @@
-// script.js
-
 // Fungsi untuk mengatur tema saat halaman dimuat
 function setThemeOnLoad() {
     const theme = localStorage.getItem("theme");
     if (theme === "dark") {
         document.body.classList.add("dark-mode");
-        updateToggleButton("Light Mode");
+        updateToggleButton("☀️");
     } else {
         document.body.classList.remove("dark-mode");
-        updateToggleButton("Dark Mode");
+        updateToggleButton("🌙");
     }
 }
 
@@ -17,10 +15,10 @@ function toggleTheme() {
     document.body.classList.toggle("dark-mode");
     if (document.body.classList.contains("dark-mode")) {
         localStorage.setItem("theme", "dark");
-        updateToggleButton("Light Mode");
+        updateToggleButton("☀️");
     } else {
         localStorage.setItem("theme", "light");
-        updateToggleButton("Dark Mode");
+        updateToggleButton("🌙");
     }
 }
 
@@ -28,7 +26,7 @@ function toggleTheme() {
 function updateToggleButton(text) {
     const toggleButton = document.getElementById("toggleTheme");
     if (toggleButton) {
-        toggleButton.textContent = `Toggle ${text}`;
+        toggleButton.textContent = ` ${text}`;
     }
 }
 
