@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesan Film</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .movie-card {
+            cursor: pointer;
+            transition: transform 0.2s;
+            border: 1px solid #dee2e6;
+            border-radius: .5rem;
+            overflow: hidden;
+        }
+        .movie-card:hover {
+            transform: scale(1.05);
+        }
+        .movie-poster {
+            height: 300px; /* Atur tinggi poster agar seragam */
+            object-fit: cover; /* Memastikan gambar terisi dengan baik */
+            width: 100%; /* Memastikan gambar responsif */
+        }
+        .active-card {
+            border: 2px solid #007bff; /* Warna border untuk film yang dipilih */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">IMNim</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="about.html">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="top10.html">Top 10</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link active" href="pesan_film.html">Pesan Film Mu</a>
+                  </li>
+                </ul>
+                <button class="btn btn-toggle ms-auto" id="toggleTheme">☀️🌙</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h2>Top 10 Film Pilihan</h2>
+        <div id="movie-list" class="row g-4"></div> <!-- Menggunakan g-4 untuk jarak antar card -->
+    </div>
+
+    <!-- Modal Pemesanan -->
+    <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="bookingModalLabel">Pesan Tiket</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="bookingDetails"></div>
+                    <div class="mb-3">
+                        <label for="showTime" class="form-label">Pilih Jam Tayang</label>
+                        <select id="showTime" class="form-select">
+                            <option value="10:00">10:00</option>
+                            <option value="13:00">13:00</option>
+                            <option value="16:00">16:00</option>
+                            <option value="19:00">19:00</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="ticketCount" class="form-label">Jumlah Tiket</label>
+                        <input type="number" id="ticketCount" class="form-control" value="1" min="1">
+                    </div>
+ </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-primary" onclick="proceedToPayment()">Lanjut ke Pembayaran</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Pembayaran -->
+    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="paymentModalLabel">Pembayaran</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="paymentMethod" class="form-label">Metode Pembayaran</label>
+                        <select id="paymentMethod" class="form-select">
+                            <option value="QRIS">QRIS</option>
+                            <option value="BCA">BCA</option>
+                            <option value="BNI">BNI</option>
+                            <option value="Gopay">Gopay</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-primary" onclick="confirmPayment()">Konfirmasi Pembayaran</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Ringkasan Pembayaran -->
+    <div class="modal fade" id="summaryModal" tabindex="-1" aria-labelledby="summaryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="summaryModalLabel">Ringkasan Pembayaran</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="paymentDetails">
+                    <!-- Detail pemesanan akan ditampilkan di sini -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Contoh data film
+        const movieData = [
+            { id: 1, title: "The Shawshank Redemption", year: 1994, duration: "2h 22m", description: "A timeless tale of hope and redemption.", rating: 9.3, poster: "images/shawshank.jpg", genre: "Drama" },
+            { id: 2, title: "The Godfather", year: 1972, duration: "2h 55m", description: "A masterpiece of crime and family.", rating: 9.2, poster: "images/godfather.jpg", genre: "Crime" },
+            { id: 3, title: "No Country for Old Men", year: 2007, duration: "2h 2m", description: "There are no clean getaways.", rating: 9.1, poster: "images/nocountry.jpg", genre: "Drama" },
+            { id: 4, title: "The Dark Knight", year: 2008, duration: "2h 32m", description: "A dark and thrilling Batman story.", rating: 9.0, poster: "images/darkknight.jpg", genre: "Action" },
+            { id: 5, title: "Pulp Fiction", year: 1994, duration: "2h 34m", description: "A Quentin Tarantino masterpiece.", rating: 8.9, poster: "images/pulpfiction.jpg", genre: "Crime" },
+            { id: 6, title: "The Lord of the Rings: The Return of the King", year: 2003, duration: "3h 21m", description: "The epic conclusion of a fantasy trilogy.", rating: 8.9, poster: "images/lotr_return.jpg", genre: "Fantasy" },
+            { id: 7, title: "Fight Club", year: 1999, duration: "2h 19m", description : "A film about rebellion and personal transformation.", rating: 8.8, poster: "images/fightclub.jpg", genre: "Drama" },
+            { id: 8, title: "Forrest Gump", year: 1994, duration: "2h 22m", description: "The life story of an extraordinary man.", rating: 8.8, poster: "images/forrestgump.jpg", genre: "Drama" },
+            { id: 9, title: "Inception", year: 2010, duration: "2h 28m", description: "A mind-bending heist in the world of dreams.", rating: 8.8, poster: "images/inception.jpg", genre: "Sci-Fi" },
+            { id: 10, title: "The Matrix", year: 1999, duration: "2h 16m", description: "A groundbreaking sci-fi film about reality and perception.", rating: 8.7, poster: "images/matrix.jpg", genre: "Sci-Fi" }
+        ];
+
+        function populateMovieList() {
+            const movieList = document.getElementById("movie-list");
+            movieList.innerHTML = ""; // Clear previous results
+            movieData.forEach(movie => {
+                const movieHTML = `
+                    <div class="col-md-4 col-sm-6 mb-4">
+                        <div class="card movie-card" onclick="selectMovie(${movie.id}, this)">
+                            <img src="${movie.poster}" class="card-img-top movie-poster" alt="${movie.title}" onerror="this.onerror=null; this.src='images/default.jpg'">
+                            <div class="card-body">
+                                <h5 class="card-title">${movie.title}</h5>
+                                <p class="card-text">${movie.description}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                movieList.innerHTML += movieHTML;
+            });
+        }
+
+        function selectMovie(movieId, element) {
+            // Menghapus kelas aktif dari semua card
+            const allCards = document.querySelectorAll('.movie-card');
+            allCards.forEach(card => {
+                card.classList.remove('active-card');
+            });
+
+            // Menambahkan kelas aktif pada card yang dipilih
+            element.classList.add('active-card');
+
+            // Menampilkan detail film di modal pemesanan
+            const selectedMovie = movieData.find(movie => movie.id === movieId);
+            const bookingDetails = document.getElementById("bookingDetails");
+            bookingDetails.innerHTML = `
+                <h6>${selectedMovie.title} (${selectedMovie.year})</h6>
+                <img src="${selectedMovie.poster}" alt="${selectedMovie.title}" class="movie-poster mb-3" onerror="this.onerror=null; this.src='images/default.jpg'">
+                <p><strong>Durasi:</strong> ${selectedMovie.duration}</p>
+                <p><strong>Deskripsi:</strong> ${selectedMovie.description}</p>
+                <p><strong>Rating:</strong> ${selectedMovie.rating}</p>
+            `;
+
+            // Menampilkan modal pemesanan
+            const bookingModal = new bootstrap.Modal(document.getElementById('bookingModal'));
+            bookingModal.show();
+        }
+
+        function proceedToPayment() {
+            const showTime = document.getElementById("showTime").value;
+            const ticketCount = document.getElementById("ticketCount").value;
+            const selectedMovie = document.querySelector('.movie-card.active-card');
+
+            if (!selectedMovie) {
+                alert("Silakan pilih film terlebih dahulu.");
+                return;
+            }
+
+            const movieTitle = selectedMovie.querySelector('.card-title').innerText;
+            const moviePoster = selectedMovie.querySelector('.movie-poster').src;
+
+            // Menampilkan modal pembayaran
+            const paymentModal = new bootstrap.Modal(document.getElementById('paymentModal'));
+            paymentModal.show();
+        }
+
+        function confirmPayment() {
+            const ticketCount = document.getElementById("ticketCount").value;
+            const showTime = document.getElementById("showTime").value;
+            const paymentMethod = document.getElementById("paymentMethod").value;
+
+            const selectedMovie = document.querySelector('.movie-card.active-card');
+            const movieTitle = selectedMovie.querySelector('.card-title').innerText;
+            const moviePoster = selectedMovie.querySelector('.movie-poster').src;
+
+            // Menampilkan ringkasan pembayaran di modal ringkasan
+            const paymentDetails = document.getElementById("paymentDetails");
+            paymentDetails.innerHTML = `
+                <div class="d-flex">
+                    <img src="${moviePoster}" alt="${movieTitle}" class="me-3 movie-poster" onerror="this.onerror=null; this.src='images/default.jpg'">
+                    < div>
+                    <h5>${movieTitle}</h5>
+                    <p><strong>Jam Tayang:</strong> ${showTime}</p>
+                    <p><strong>Jumlah Tiket:</strong> ${ticketCount}</p>
+                    <p><strong>Metode Pembayaran:</strong> ${paymentMethod}</p>
+                </div>
+            </div>
+        `;
+
+        // Menampilkan modal ringkasan pembayaran
+        const summaryModal = new bootstrap.Modal(document.getElementById('summaryModal'));
+        summaryModal.show();
+
+        // Menutup modal pembayaran
+        const paymentModal = bootstrap.Modal.getInstance(document.getElementById('paymentModal'));
+        paymentModal.hide();
+
+        // Menutup modal pemesanan
+        const bookingModal = bootstrap.Modal.getInstance(document.getElementById('bookingModal'));
+        bookingModal.hide();
+    }
+
+    // Panggil fungsi untuk mengisi daftar film saat halaman dimuat
+    document.addEventListener("DOMContentLoaded", populateMovieList);
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

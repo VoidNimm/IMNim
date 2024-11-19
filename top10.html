@@ -26,8 +26,11 @@
                     <li class="nav-item">
                         <a class="nav-link active" href="top10.html">Top 10</a>
                     </li>
+                    <li class="nav-item"></li>
+                        <a class="nav-link active" href="pesan_film.html">Pesan Film Mu</a>
+                    </li>
                 </ul>
-                <button class="btn btn-toggle ms-auto" id="toggleTheme">Toggle Dark Mode</button>
+                <button class="btn btn-toggle ms-auto" id="toggleTheme">☀️🌙</button>
             </div>
         </div>
     </nav>
@@ -36,9 +39,48 @@
     <div class="container py-5">
         <h1 class="mb-4">IMNim Top 10 Movies</h1>
 
-        <!-- Search bar -->
-        <div class="mb-4">
-            <input type="text" id="searchInput" class="form-control" placeholder="Search for a movie...">
+        <div class="d-flex mb-4">
+            <input type="text" id="searchInput" class="form-control me-2" placeholder="Search for a movie...">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#filterModal">Filter</button>
+        </div>
+
+        <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="filterModalLabel">Filter Movies</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h6>Genre</h6>
+                        <select id="genreFilter" class="form-select mb-3">
+                            <option value="">Semua Genre</option>
+                            <option value="Drama">Drama</option>
+                            <option value="Action">Action</option>
+                            <option value="Crime">Crime</option>
+                            <option value="Fantasy">Fantasy</option>
+                            <option value="Sci-Fi">Sci-Fi</option>
+                        </select>
+                        
+                        <h6>Tanggal Rilis</h6>
+                        <select id="yearFilter" class="form-select mb-3">
+                            <option value="">Semua Tahun</option>
+                            <option value="1999">1999 dan Sebelumnya</option>
+                            <option value="2000">2000 dan Setelahnya</option>
+                        </select>
+
+                        <h6>Rating di Atas</h6>
+                        <select id="ratingFilter" class="form-select mb-3">
+                            <option value="">Semua Rating</option>
+                            <option value="9">9 dan di Atas</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                        <button type="button" class="btn btn-primary" onclick="filterMovies()">Terapkan Filter</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Movie List -->
@@ -75,24 +117,22 @@
     <script>
         // Data Film Awal
         const movieData = [
-            { id: 1, title: "The Shawshank Redemption", year: 1994, duration: "2h 22m", description: "A timeless tale of hope and redemption.", rating: 9.3, votes: 0, poster: "images/shawshank.jpg" },
-            { id: 2, title: "The Godfather", year: 1972, duration: "2h 55m", description: "A masterpiece of crime and family.", rating: 9.2, votes: 0, poster: "images/godfather.jpg" },
-            { id: 3, title: "No Country for Old Men", year: 2007, duration: "2h 2m", description: "There are no clean getaways.", rating: 9.1, votes: 0, poster: "images/nocountry.jpg" },
-            { id: 4, title: "The Dark Knight", year: 2008, duration: "2h 32m", description: "A dark and thrilling Batman story.", rating: 9.0, votes: 0, poster: "images/darkknight.jpg" },
-            { id: 5, title: "Pulp Fiction", year: 1994, duration: "2h 34m", description: "A Quentin Tarantino masterpiece.", rating: 8.9, votes: 0, poster: "images/pulpfiction.jpg" },
-            { id: 6, title: "The Lord of the Rings: The Return of the King", year: 2003, duration: "3h 21m", description: "The epic conclusion of a fantasy trilogy.", rating: 8.9, votes: 0, poster: "images/lotr_return.jpg" },
-            { id: 7, title: "Fight Club", year: 1999, duration: "2h 19m", description: "A film about rebellion and personal transformation.", rating: 8.8, votes: 0, poster: "images/fightclub.jpg" },
-            { id: 8, title: "Forrest Gump", year: 1994, duration: "2h 22m", description: "The life story of an extraordinary man.", rating: 8.8, votes: 0, poster: "images/forrestgump.jpg" },
-            { id: 9, title: "Inception", year: 2010, duration: "2h 28m", description: "A mind-bending heist in the world of dreams.", rating: 8.8, votes: 0, poster: "images/inception.jpg" },
-            { id: 10, title: "The Matrix", year: 1999, duration: "2h 16m", description: "A groundbreaking sci-fi film about reality and perception.", rating: 8.7, votes: 0, poster: "images/matrix.jpg" }
-            // Tambahkan film lainnya hingga Top 100 dengan cara yang sama
+            { id: 1, title: "The Shawshank Redemption", year: 1994, duration: "2h 22m", description: "A timeless tale of hope and redemption.", rating: 9.3, votes: 0, poster: "images/shawshank.jpg", genre: "Drama" },
+            { id: 2, title: "The Godfather", year: 1972, duration: "2h 55m", description: "A masterpiece of crime and family.", rating: 9.2, votes: 0, poster: "images/godfather.jpg", genre: "Crime" },
+            { id: 3, title: "No Country for Old Men", year: 2007, duration: "2h 2m", description: "There are no clean getaways.", rating: 9.1, votes: 0, poster: "images/nocountry.jpg", genre: "Drama" },
+            { id: 4, title: "The Dark Knight", year: 2008, duration: "2h 32m", description: "A dark and thrilling Batman story.", rating: 9.0, votes: 0, poster: "images/darkknight.jpg", genre: "Action" },
+            { id: 5, title: "Pulp Fiction", year: 1994, duration: "2h 34m", description: "A Quentin Tarantino masterpiece.", rating: 8.9, votes: 0, poster: "images/pulpfiction.jpg", genre: "Crime" },
+            { id: 6, title: "The Lord of the Rings: The Return of the King", year: 2003, duration: "3h 21m", description: "The epic conclusion of a fantasy trilogy.", rating: 8.9, votes: 0, poster: "images/lotr_return.jpg", genre: "Fantasy" },
+            { id: 7, title: "Fight Club", year: 1999, duration: "2h 19m", description: "A film about rebellion and personal transformation.", rating: 8.8, votes: 0, poster: "images/fightclub.jpg", genre: "Drama" },
+            { id: 8, title: "Forrest Gump", year: 1994, duration: "2h 22m", description: "The life story of an extraordinary man.", rating: 8.8, votes: 0, poster: "images/forrestgump.jpg", genre: "Drama" },
+            { id: 9, title: "Inception", year: 2010, duration: "2h 28m", description: "A mind-bending heist in the world of dreams.", rating: 8.8, votes: 0, poster: "images/inception.jpg", genre: "Sci-Fi" },
+            { id: 10, title: "The Matrix", year: 1999, duration: "2h 16m", description: "A groundbreaking sci-fi film about reality and perception.", rating: 8.7, votes: 0, poster: "images/matrix.jpg", genre: "Sci-Fi" }
         ];
 
         // Populate Movie List
         function populateMovieList() {
             const movieList = document.getElementById("movie-list");
             movieList.innerHTML = "";
-            movieData.sort((a, b) => b.rating - a.rating);
             movieData.forEach((movie, index) => {
                 const movieHTML = `
                     <div class="col-12">
@@ -100,7 +140,7 @@
                             <img src="${movie.poster}" alt="${movie.title}" class="me-3 movie-poster" onerror="this.onerror=null; this.src='images/default.jpg'">
                             <div class="flex-grow-1">
                                 <h5>${index + 1}. ${movie.title} (${movie.year})</h5>
-                                <small>${movie.duration}</small>
+                                <small>${movie.duration} - Genre: ${movie.genre}</small>
                                 <p class="mb-1">${movie.description}</p>
                                 <p class="mb-1"><strong>Rating:</strong> <span id="rating-${movie.id}">${movie.rating.toFixed(1)}</span> <span>(${movie.votes} votes)</span></p>
                                 <button class="btn btn-rate" onclick="openRatingModal(${movie.id})">Vote</button>
@@ -111,6 +151,53 @@
                 movieList.innerHTML += movieHTML;
             });
         }
+
+        // Filter Functionality
+        function filterMovies() {
+            const genreFilter = document.getElementById("genreFilter").value;
+            const yearFilter = document.getElementById("yearFilter").value;
+            const ratingFilter = document.getElementById("ratingFilter").value;
+            const searchInput = document.getElementById("searchInput").value.toLowerCase();
+
+            const filteredMovies = movieData.filter(movie => {
+                const matchesGenre = genreFilter ? movie.genre === genreFilter : true;
+                const matchesYear = yearFilter ? movie.year.toString() === yearFilter : true
+                const matchesRating = ratingFilter ? movie.rating >= parseFloat(ratingFilter) : true;
+                const matchesSearch = movie.title.toLowerCase().includes(searchInput);
+                return matchesGenre && matchesYear && matchesRating && matchesSearch;
+            });
+
+            const movieList = document.getElementById("movie-list");
+            movieList.innerHTML = ""; // Clear previous results
+            filteredMovies.forEach((movie, index) => {
+                const movieHTML = `
+                    <div class="col-12">
+                        <div class="d-flex align-items-start p-3 movie-card">
+                            <img src="${movie.poster}" alt="${movie.title}" class="me-3 movie-poster" onerror="this.onerror=null; this.src='images/default.jpg'">
+                            <div class="flex-grow-1">
+                                <h5>${index + 1}. ${movie.title} (${movie.year})</h5>
+                                <small>${movie.duration} - Genre: ${movie.genre}</small>
+                                <p class="mb-1">${movie.description}</p>
+                                <p class="mb-1"><strong>Rating:</strong> <span id="rating-${movie.id}">${movie.rating.toFixed(1)}</span> <span>(${movie.votes} votes)</span></p>
+                                <button class="btn btn-rate" onclick="openRatingModal(${movie.id})">Vote</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                movieList.innerHTML += movieHTML;
+            });
+        }
+
+        // Event Listeners for Filters and Search
+        document.getElementById("genreFilter").addEventListener("change", filterMovies);
+        document.getElementById("yearFilter").addEventListener("change", filterMovies);
+        document.getElementById("ratingFilter").addEventListener("change", filterMovies);
+        document.getElementById("searchInput").addEventListener("input", filterMovies);
+
+        // Initialize Movie List on Page Load
+        window.onload = function() {
+            populateMovieList();
+        };
 
         // Open the Rating Modal
         function openRatingModal(movieId) {
@@ -161,6 +248,40 @@
             });
         });
 
+        function filterMovies() {
+    const genreFilter = document.getElementById("genreFilter").value;
+    const yearFilter = document.getElementById("yearFilter").value;
+    const ratingFilter = document.getElementById("ratingFilter").value;
+    const searchInput = document.getElementById("searchInput").value.toLowerCase();
+
+    const filteredMovies = movieData.filter(movie => {
+        const matchesGenre = genreFilter ? movie.genre === genreFilter : true;
+        const matchesYear = yearFilter ? (yearFilter === "1999" ? movie.year < 2000 : movie.year >= 2000) : true;
+        const matchesRating = ratingFilter ? movie.rating >= parseFloat(ratingFilter) : true;
+        const matchesSearch = movie.title.toLowerCase().includes(searchInput);
+
+        return matchesGenre && matchesYear && matchesRating && matchesSearch;
+    });
+
+    const movieList = document.getElementById("movie-list");
+    movieList.innerHTML = ""; // Clear previous results
+    filteredMovies.forEach((movie, index) => {
+        const movieHTML = `
+            <div class="col-12">
+                <div class="d-flex align-items-start p-3 movie-card">
+                    <img src="${movie.poster}" alt="${movie.title}" class="me-3 movie-poster" onerror="this.onerror=null; this.src='images/default.jpg'">
+                    <div class="flex-grow-1">
+                        <h5>${index + 1}. ${movie.title} (${movie.year})</h5>
+                        <small>${movie.duration} - Genre: ${movie.genre}</small>
+                        <p class="mb-1">${movie.description}</p>
+                        <p class="mb-1"><strong>Rating:</strong> <span id="rating-${movie.id}">${movie.rating.toFixed(1)}</span> <span>(${movie.votes} votes)</span></p>
+                    </div>
+                </div>
+            </div>
+        `;
+        movieList.innerHTML += movieHTML;
+    });
+}
         // Inisialisasi daftar film saat halaman dimuat
         window.onload = populateMovieList;
     </script>
