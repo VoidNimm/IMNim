@@ -81,7 +81,6 @@
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="ticketCount" class="form ```html
                         <label for="ticketCount" class="form-label">Jumlah Tiket</label>
                         <input type="number" id="ticketCount" class="form-control" value="1" min="1">
                     </div>
@@ -140,18 +139,19 @@
     </div>
 
     <script>
-        // Contoh data film
+        // Contoh data film dengan harga
+        const ticketPrice = 50000; // Harga tiket
         const movieData = [
-            { id: 1, title: "The Shawshank Redemption", year: 1994, duration: "2h 22m", description: "A timeless tale of hope and redemption.", rating: 9.3, poster: "images/shawshank.jpg", genre: "Drama" },
-            { id: 2, title: "The Godfather", year: 1972, duration: "2h 55m", description: "A masterpiece of crime and family.", rating: 9.2, poster: "images/godfather.jpg", genre: "Crime" },
-            { id: 3, title: "No Country for Old Men", year: 2007, duration: "2h 2m", description: "There are no clean getaways.", rating: 9.1, poster: "images/nocountry.jpg", genre: "Drama" },
-            { id: 4, title: "The Dark Knight", year: 2008, duration: "2h 32m", description: "A dark and thrilling Batman story.", rating: 9.0, poster: "images/darkknight.jpg", genre: "Action" },
-            { id: 5, title: "Pulp Fiction", year: 1994, duration: "2h 34m", description: "A Quentin Tarantino masterpiece.", rating: 8.9, poster: "images/pulpfiction.jpg", genre: "Crime" },
-            { id: 6, title: "The Lord of the Rings: The Return of the King", year: 2003, duration: "3h 21m", description: "The epic conclusion of a fantasy trilogy.", rating : 8.9, poster: "images/lotr_return.jpg", genre: "Fantasy" },
-            { id: 7, title: "Fight Club", year: 1999, duration: "2h 19m", description: "A film about rebellion and personal transformation.", rating: 8.8, poster: "images/fightclub.jpg", genre: "Drama" },
-            { id: 8, title: "Forrest Gump", year: 1994, duration: "2h 22m", description: "The life story of an extraordinary man.", rating: 8.8, poster: "images/forrestgump.jpg", genre: "Drama" },
-            { id: 9, title: "Inception", year: 2010, duration: "2h 28m", description: "A mind-bending heist in the world of dreams.", rating: 8.8, poster: "images/inception.jpg", genre: "Sci-Fi" },
-            { id: 10, title: "The Matrix", year: 1999, duration: "2h 16m", description: "A groundbreaking sci-fi film about reality and perception.", rating: 8.7, poster: "images/matrix.jpg", genre: "Sci-Fi" }
+            { id: 1, title: "The Shawshank Redemption", year: 1994, duration: "2h 22m", description: "A timeless tale of hope and redemption.", rating: 9.3, poster: "images/shawshank.jpg", genre: "Drama", price: ticketPrice },
+            { id: 2, title: "The Godfather", year: 1972, duration: "2h 55m", description: "A masterpiece of crime and family.", rating: 9.2, poster: "images/godfather.jpg", genre: "Crime", price: ticketPrice },
+            { id: 3, title: "No Country for Old Men", year: 2007, duration: "2h 2m", description: "There are no clean getaways.", rating: 9.1, poster: "images/nocountry.jpg", genre: "Drama", price: ticketPrice },
+            { id: 4, title: "The Dark Knight", year: 2008, duration: "2h 32m", description: "A dark and thrilling Batman story.", rating: 9.0, poster: "images/darkknight.jpg", genre: "Action", price: ticketPrice },
+            { id: 5, title: "Pulp Fiction", year: 1994, duration: "2h 34m", description: "A Quentin Tarantino masterpiece.", rating: 8.9, poster: "images/pulpfiction.jpg", genre: "Crime", price: ticketPrice },
+            { id: 6, title: "The Lord of the Rings: The Return of the King", year: 2003, duration: "3h 21m", description: "The epic conclusion of a fantasy trilogy.", rating: 8.9, poster: "images/lotr_return.jpg", genre: "Fantasy", price: ticketPrice },
+            { id: 7, title: "Fight Club", year: 1999, duration: "2h 19m", description: "A film about rebellion and personal transformation.", rating: 8.8, poster: "images/fightclub.jpg", genre: "Drama", price: ticketPrice },
+            { id: 8, title: "Forrest Gump", year: 1994, duration: "2h 22m", description: "The life story of an extraordinary man.", rating: 8.8, poster: "images/forrestgump.jpg", genre: "Drama", price: ticketPrice },
+            { id: 9, title: "Inception", year: 2010, duration: "2h 28m", description: "A mind-bending heist in the world of dreams.", rating: 8.8, poster: "images/inception.jpg", genre: "Sci-Fi", price: ticketPrice },
+            { id: 10, title: "The Matrix", year: 1999, duration: "2h 16m", description: "A groundbreaking sci-fi film about reality and perception.", rating: 8.7, poster: "images/matrix.jpg", genre: "Sci-Fi", price: ticketPrice }
         ];
 
         function populateMovieList() {
@@ -165,6 +165,7 @@
                             <div class="card-body">
                                 <h5 class="card-title">${movie.title}</h5>
                                 <p class="card-text">${movie.description}</p>
+                                <p class="card-text"><strong>Harga Tiket:</strong> Rp ${movie.price.toLocaleString()}</p>
                             </div>
                         </div>
                     </div>
@@ -189,6 +190,7 @@
                 <p><strong>Durasi:</strong> ${selectedMovie.duration}</p>
                 <p><strong>Deskripsi:</strong> ${selectedMovie.description}</p>
                 <p><strong>Rating:</strong> ${selectedMovie.rating}</p>
+                <p><strong>Harga Tiket:</strong> Rp ${selectedMovie.price.toLocaleString()}</p>
             `;
 
             const bookingModal = new bootstrap.Modal(document.getElementById('bookingModal'));
@@ -207,6 +209,7 @@
 
             const movieTitle = selectedMovie.querySelector('.card-title').innerText;
             const moviePoster = selectedMovie.querySelector('.movie-poster').src;
+            const moviePrice = movieData.find(movie => movie.title === movieTitle).price;
 
             const paymentModal = new bootstrap.Modal(document.getElementById('paymentModal'));
             paymentModal.show();
@@ -220,6 +223,9 @@
             const selectedMovie = document.querySelector('.movie-card.active-card');
             const movieTitle = selectedMovie.querySelector('.card-title').innerText;
             const moviePoster = selectedMovie.querySelector('.movie-poster').src;
+            const moviePrice = movieData.find(movie => movie.title === movieTitle).price;
+
+            const total = moviePrice * ticketCount;
 
             const paymentDetails = document.getElementById("paymentDetails");
             paymentDetails.innerHTML = `
@@ -227,9 +233,10 @@
                     <img src="${moviePoster}" alt="${movieTitle}" class="me-3 movie-poster" onerror="this.onerror=null; this.src='images/default.jpg'">
                     <div>
                         <h5>${movieTitle}</h5>
- <p><strong>Jam Tayang:</strong> ${showTime}</p>
+                        <p><strong>Jam Tayang:</strong> ${showTime}</p>
                         <p><strong>Jumlah Tiket:</strong> ${ticketCount}</p>
                         <p><strong>Metode Pembayaran:</strong> ${paymentMethod}</p>
+                        <p><strong>Total Harga:</strong> Rp ${total.toLocaleString()}</p>
                     </div>
                 </div>
             `;
