@@ -30,7 +30,7 @@
                         <a class="nav-link active" href="pesan_film.html">Pesan Film Mu</a>
                     </li>
                 </ul>
-                <button class="btn btn-toggle ms-auto" id="toggleTheme">☀️🌙</button>
+                
             </div>
         </div>
     </nav>
@@ -136,7 +136,7 @@
             movieData.forEach((movie, index) => {
                 const movieHTML = `
                     <div class="col-12">
-                        <div class="d-flex align-items-start p-3 movie-card">
+                        <div class="d-flex align-items-start p-3 movie-card" style="color:#212121">
                             <img src="${movie.poster}" alt="${movie.title}" class="me-3 movie-poster" onerror="this.onerror=null; this.src='images/default.jpg'">
                             <div class="flex-grow-1">
                                 <h5>${index + 1}. ${movie.title} (${movie.year})</h5>
@@ -171,8 +171,8 @@
             movieList.innerHTML = ""; // Clear previous results
             filteredMovies.forEach((movie, index) => {
                 const movieHTML = `
-                    <div class="col-12">
-                        <div class="d-flex align-items-start p-3 movie-card">
+                    <div class="col-12" >
+                        <div class="d-flex align-items-start p-3 movie-card" style="color:#212121">
                             <img src="${movie.poster}" alt="${movie.title}" class="me-3 movie-poster" onerror="this.onerror=null; this.src='images/default.jpg'">
                             <div class="flex-grow-1">
                                 <h5>${index + 1}. ${movie.title} (${movie.year})</h5>
@@ -268,13 +268,14 @@
     filteredMovies.forEach((movie, index) => {
         const movieHTML = `
             <div class="col-12">
-                <div class="d-flex align-items-start p-3 movie-card">
+                <div class="d-flex align-items-start p-3 movie-card" style="color:#212121">
                     <img src="${movie.poster}" alt="${movie.title}" class="me-3 movie-poster" onerror="this.onerror=null; this.src='images/default.jpg'">
                     <div class="flex-grow-1">
                         <h5>${index + 1}. ${movie.title} (${movie.year})</h5>
                         <small>${movie.duration} - Genre: ${movie.genre}</small>
                         <p class="mb-1">${movie.description}</p>
                         <p class="mb-1"><strong>Rating:</strong> <span id="rating-${movie.id}">${movie.rating.toFixed(1)}</span> <span>(${movie.votes} votes)</span></p>
+                        <button class="btn btn-rate" onclick="openRatingModal(${movie.id})">Vote</button>
                     </div>
                 </div>
             </div>
